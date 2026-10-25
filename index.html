@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#1c1a28" />
+    <title>Pilantro</title>
+    <script type="module" crossorigin src="./assets/index-v34VR3zh.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-CD9k1fb7.css">
+  </head>
+  <body>
+    <canvas id="bg" aria-hidden="true"></canvas>
+    <canvas id="table" aria-label="Mesa" hidden></canvas>
+    <div id="crt" aria-hidden="true"></div>
+
+    <!-- Barra lateral da corrida -->
+    <div id="runHud" hidden>
+      <aside id="side">
+        <div id="sBlind" class="sblind">
+          <div id="sBlindName" class="sbname"></div>
+          <div id="sBlindDesc" class="sbdesc"></div>
+          <div class="sbtarget">Meta <b id="sTarget"></b></div>
+        </div>
+        <div class="sbox"><span>Pontos</span><b id="sScore">0</b></div>
+        <div class="scombo">
+          <div id="sCombo" class="cname">Rodada</div>
+          <div class="cm"><b id="sChips" class="chips">0</b><span class="x">×</span><b id="sMult" class="mult">0</b></div>
+        </div>
+        <div class="sgrid">
+          <div class="stat"><span>Rodadas</span><b id="sRounds" class="blue"></b></div>
+          <div class="stat"><span>Rival</span><b id="sRival" class="red"></b></div>
+          <div class="stat"><span>Dinheiro</span><b id="sMoney" class="gold"></b></div>
+          <div class="stat"><span>Ante</span><b id="sAnte"></b></div>
+        </div>
+        <div class="sbtns">
+          <button id="btnTrains" class="ghost small" type="button">Pausa</button>
+          <button id="btnDeck" class="ghost small" type="button">Baralho</button>
+        </div>
+      </aside>
+    </div>
+    <div id="crewBar" hidden>
+      <div class="crewhead">Comparsas <span id="sCrewCount"></span></div>
+      <div id="sCrew" class="crewgrid"></div>
+    </div>
+    <div id="runModal" class="modal" hidden><div id="runPanel" class="panel wide" role="dialog" aria-modal="true"></div></div>
+
+    <!-- Botões da mesa (clássico e duelo) -->
+    <div id="tableHud" hidden>
+      <div id="status" role="status" aria-live="polite"></div>
+      <div id="actions">
+        <button id="btnMulti" class="orange" hidden>Jogar <kbd>Enter</kbd></button>
+        <button id="btnCatch" class="warn" hidden>Pegar! <kbd>C</kbd></button>
+        <button id="btnCall" class="gold" hidden>Última! <kbd>U</kbd></button>
+        <button id="btnPass" hidden>Passar <kbd>P</kbd></button>
+        <button id="btnDraw" hidden>Comprar <kbd>D</kbd></button>
+      </div>
+    </div>
+
+    <div id="toasts" aria-live="polite"></div>
+
+    <div id="topbar">
+      <button id="btnSound" class="icon" title="Som (M)" aria-label="Som">🔊</button>
+      <button id="btnMenu" class="icon" title="Menu (Esc)" aria-label="Menu">☰</button>
+    </div>
+
+    <div id="picker" class="modal" hidden>
+      <div class="panel">
+        <h2 id="pickerTitle"></h2>
+        <div id="pickerOptions" class="options"></div>
+        <button id="pickerCancel" class="ghost">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="title" class="modal">
+      <div class="panel">
+        <h1 class="logo" aria-label="Pilantro"><span>P</span><span>I</span><span>L</span><span>A</span><span>N</span><span>T</span><span>R</span><span>O</span></h1>
+        <p class="sub">Duelos de UNO com progressão maluca: encha a mão do rival e bata na hora certa.</p>
+        <div class="stack">
+          <button id="tContinue" class="primary" type="button" hidden>Continuar corrida</button>
+          <button id="tNew" class="primary" type="button">Nova corrida</button>
+          <button id="tClassic" class="ghost" type="button">Clássico contra bots</button>
+          <button id="tCrew" class="ghost" type="button">O bando <small>(todos os comparsas)</small></button>
+        </div>
+        <details class="howto">
+          <summary>Como jogar</summary>
+          <p>Cada <b>blind</b> é um duelo de UNO contra um rival, com uma meta de pontos e até 2 rodadas. Todos começam com 4 cartas, e comprar é sempre uma carta só.</p>
+          <p>Quando você <b>bate</b> (zera a mão), as cartas que sobraram na mão do rival viram <span class="chips">fichas</span> pela pontuação oficial do UNO: número vale o número, ação vale 20, curinga vale 50.</p>
+          <p>O <span class="mult">multi</span> cresce com o que você faz na rodada: +2 e +4 no rival, pular, inverter, curinga, dobradinha (números iguais juntos), escadinha (3-4-5 da mesma cor juntos), avisar a última carta e pegar o rival sem avisar. Bater logo ou encher a mão dele antes? Você decide.</p>
+          <p>Na loja: <b>comparsas</b> (até 5 capangas que dobram as regras a seu favor), <b>treinos</b> (cada jogada rende mais), <b>cartas especiais</b>, <b>vales</b> e limpeza do baralho. O terceiro blind de cada ante é um <b>chefe</b> com uma regra da casa.</p>
+        </details>
+        <div id="titleOpts"></div>
+      </div>
+    </div>
+
+    <div id="gallery" class="modal" hidden>
+      <div class="panel wide" role="dialog" aria-modal="true" aria-labelledby="galleryTitle">
+        <h1 id="galleryTitle">O bando</h1>
+        <p class="sub">Os comparsas que podem aparecer na loja. Agem da esquerda para a direita, então a ordem na fileira importa.</p>
+        <div id="galleryList"></div>
+        <div class="buttons center"><button id="galleryClose" class="primary" type="button">Voltar</button></div>
+      </div>
+    </div>
+
+    <div id="menu" class="modal" hidden>
+      <form class="panel" id="menuForm">
+        <h1>Clássico</h1>
+        <p class="sub">Partida contra bots, ou online com quem está com o jogo aberto.</p>
+        <label class="row">Adversários (bots)
+          <select name="bots">
+            <option value="1">1</option><option value="2">2</option><option value="3" selected>3</option>
+            <option value="4">4</option><option value="5">5</option>
+          </select>
+        </label>
+        <label class="row">Velocidade dos bots
+          <select name="speed">
+            <option value="1.6">Calma</option><option value="1" selected>Normal</option><option value="0.45">Rápida</option>
+          </select>
+        </label>
+        <fieldset>
+          <legend>Regras da casa</legend>
+          <label><input type="checkbox" name="stacking" /> Empilhar +2 / +4</label>
+          <label><input type="checkbox" name="sevenZero" /> Sete-zero (7 troca, 0 gira as mãos)</label>
+          <label><input type="checkbox" name="jumpIn" /> Jogar por cima (carta idêntica fora da vez)</label>
+          <label><input type="checkbox" name="drawUntilPlayable" /> Comprar até poder jogar</label>
+          <label><input type="checkbox" name="multiNumber" /> Dobradinha (jogar números iguais juntos)</label>
+          <label><input type="checkbox" name="sequences" /> Escadinha (jogar números seguidos da mesma cor)</label>
+        </fieldset>
+        <div id="classicOpts"></div>
+        <div class="buttons">
+          <button type="button" id="menuBack" class="ghost">Menu inicial</button>
+          <button type="button" id="menuOnline" class="ghost">Jogar online</button>
+          <button type="button" id="menuResume" class="ghost" hidden>Voltar à partida</button>
+          <button type="submit" class="primary">Nova partida</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="online" class="modal" hidden>
+      <div class="panel" role="dialog" aria-modal="true" aria-labelledby="onlineTitle">
+        <h1 id="onlineTitle">Jogar online</h1>
+        <div id="onlineBody"></div>
+      </div>
+    </div>
+
+    <div id="end" class="modal" hidden>
+      <div class="panel">
+        <h1 id="endTitle"></h1>
+        <p id="endSub" class="sub"></p>
+        <ol id="score"></ol>
+        <div class="buttons">
+          <button id="endMenu" class="ghost">Menu</button>
+          <button id="endAgain" class="primary">Jogar de novo</button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>
